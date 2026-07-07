@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAC PN 2026 — Kennedy</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--navy:#0D2D6B;--blue:#1557A0;--gold:#F5A623;--ok:#16a34a;--ok-bg:#dcfce7;--ok-lt:#f0fdf4;--warn:#d97706;--warn-bg:#fef3c7;--warn-lt:#fffbeb;--risk:#dc2626;--risk-bg:#fee2e2;--risk-lt:#fff5f5;--gray:#64748b;--bg:#f0f4f8;--border:#e2e8f0;--font:'Segoe UI',Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:#1e293b;font-size:13px}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:18px 28px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 16px rgba(13,45,107,.3)}
+.hdr-ico{width:48px;height:48px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.hdr-txt h1{font-size:18px;font-weight:700}
+.hdr-txt p{font-size:11px;opacity:.85;margin-top:2px}
+.hdr-badges{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.bg{background:var(--gold);color:#7c4700}.bl{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.wrap{max-width:1440px;margin:0 auto;padding:22px 18px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:650px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:#fff;border-radius:12px;padding:16px 14px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-left:4px solid var(--border);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.kpi.k-ok{border-left-color:var(--ok)}.kpi.k-warn{border-left-color:var(--warn)}.kpi.k-risk{border-left-color:var(--risk)}.kpi.k-blue{border-left-color:var(--blue)}.kpi.k-gold{border-left-color:var(--gold)}
+.kpi-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--gray);margin-bottom:5px}
+.kpi-val{font-size:26px;font-weight:800;line-height:1;color:var(--navy)}
+.kpi-val.ok{color:var(--ok)}.kpi-val.warn{color:var(--warn)}.kpi-val.risk{color:var(--risk)}
+.kpi-sub{font-size:10px;color:var(--gray);margin-top:4px}
+.kpi-ico{font-size:20px;float:right;margin-top:-28px}
+.sec{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:18px;margin-bottom:20px}
+.sec-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sec-h h2{font-size:14px;font-weight:700;color:var(--navy)}
+.pill{font-size:11px;padding:2px 9px;border-radius:12px;font-weight:600;background:#f1f5f9;color:var(--gray)}
+.fbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.fbtn{padding:5px 14px;border-radius:20px;border:2px solid transparent;cursor:pointer;font-size:11px;font-weight:700;transition:all .15s;background:#f1f5f9;color:var(--gray)}
+.fbtn.fa{background:var(--navy);color:#fff;border-color:var(--navy)}
+.fbtn.fs{background:var(--risk-bg);color:var(--risk);border-color:var(--risk)}
+.fbtn.ft{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+.fbtn.fo{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.srch{margin-left:auto;padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;font-size:11px;outline:none;width:190px}
+.srch:focus{border-color:var(--blue)}
+.twrap{overflow-x:auto;max-height:400px;overflow-y:auto}
+table.atbl{width:100%;border-collapse:collapse;font-size:11px}
+table.atbl th{background:var(--navy);color:#fff;padding:7px 9px;text-align:left;font-weight:600;position:sticky;top:0;z-index:2;white-space:nowrap;font-size:10px}
+table.atbl td{padding:6px 9px;border-bottom:1px solid var(--border);vertical-align:middle}
+table.atbl tr:hover td{background:#f8faff!important}
+.rs td{background:var(--risk-lt)!important}.rt td{background:var(--warn-lt)!important}.ro td{background:var(--ok-lt)!important}
+.sem{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:9px;font-weight:700;font-size:10px;white-space:nowrap}
+.ss{background:var(--risk-bg);color:var(--risk)}.st{background:var(--warn-bg);color:var(--warn)}.so{background:var(--ok-bg);color:var(--ok)}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.ds{background:var(--risk)}.dt{background:var(--warn)}.do{background:var(--ok)}
+.pb{background:#e5e7eb;border-radius:4px;height:5px;min-width:55px}
+.pbi{height:5px;border-radius:4px}
+.norow{text-align:center;padding:24px;color:var(--gray);font-style:italic}
+.tcnt{font-size:10px;color:var(--gray);margin-top:6px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+@media(max-width:880px){.cgrid{grid-template-columns:1fr}}
+.ccard canvas{max-height:230px}
+.cwcard canvas{max-height:180px}
+table.rtbl{width:100%;border-collapse:collapse;font-size:11px}
+table.rtbl th{background:var(--navy);color:#fff;padding:7px 11px;text-align:center;font-size:10px;font-weight:600}
+table.rtbl th:first-child{text-align:left}
+table.rtbl td{padding:6px 11px;border-bottom:1px solid var(--border);text-align:center}
+table.rtbl td:first-child{text-align:left;font-weight:600;color:var(--navy)}
+.crow{background:rgba(13,45,107,.06)!important;font-weight:700}
+.ftag{background:var(--risk-bg);color:var(--risk);border-radius:9px;padding:1px 7px;font-size:9px;font-weight:700;margin-left:3px;display:inline-block}
+.itag{background:var(--ok-bg);color:var(--ok);border-radius:9px;padding:1px 7px;font-size:9px;font-weight:700;margin-left:3px;display:inline-block}
+.inst{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:20px}
+.inst h3{font-size:14px;font-weight:700;margin-bottom:10px}
+.inst ol{padding-left:20px;line-height:2.2}
+.inst li{font-size:12px;opacity:.92}
+.inst code{background:rgba(255,255,255,.2);padding:2px 7px;border-radius:5px;font-family:monospace;font-size:11px}
+.ftr{text-align:center;padding:16px;color:var(--gray);font-size:10px;border-top:1px solid var(--border);background:#fff;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-ico">🏛️</div>
+  <div class="hdr-txt">
+    <h1>PAC Personas Naturales · 2026</h1>
+    <p>Alcaldía Local de Kennedy · Participación Ciudadana</p>
+  </div>
+  <div class="hdr-badges">
+    <span class="badge bg">📅 Corte: JUNIO 2026</span>
+    <span class="badge bl">🗓 07/07/2026</span>
+    <span class="badge bl" id="source-pill">📂 Datos locales</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="inst">
+  <h3>⚙️ ¿Cómo actualizar este panel cada mes?</h3>
+  <ol>
+    <li>Abrir <code>PAC_PN_Kennedy_vFINAL.xlsx</code> → ir a la hoja <strong>SEGUIMIENTO</strong></li>
+    <li>En la columna <strong>COB</strong> del mes vencido: registrar el mes en que cada contratista cobró</li>
+    <li>Si un PAC fue reprogramado: cambiar la columna <strong>PAC</strong> al nuevo mes</li>
+    <li>Guardar el Excel → doble clic en <code>actualizar_dashboard.command</code></li>
+    <li>El nuevo link queda en <code>LINK_DASHBOARD.txt</code> y en el portapapeles</li>
+  </ol>
+</div>
+
+<div class="kpis">
+  <div class="kpi k-blue" onclick="filtrar('TODOS')">
+    <div class="kpi-lbl">Total Contratistas</div>
+    <div class="kpi-val" id="kv-tot"></div>
+    <div class="kpi-sub">personas naturales activas</div>
+    <div class="kpi-ico">👥</div>
+  </div>
+  <div class="kpi k-ok" onclick="filtrar('AL DÍA')">
+    <div class="kpi-lbl">✅ Al Día</div>
+    <div class="kpi-val ok" id="kv-ok"></div>
+    <div class="kpi-sub">cobros a tiempo · clic para filtrar</div>
+    <div class="kpi-ico">🟢</div>
+  </div>
+  <div class="kpi k-warn" onclick="filtrar('TARDE')">
+    <div class="kpi-lbl">⏰ Cobran Tarde</div>
+    <div class="kpi-val warn" id="kv-tard"></div>
+    <div class="kpi-sub">cobros fuera del PAC · clic para filtrar</div>
+    <div class="kpi-ico">🟡</div>
+  </div>
+  <div class="kpi k-risk" onclick="filtrar('SIN COBRAR')">
+    <div class="kpi-lbl">🚨 Sin Cobrar</div>
+    <div class="kpi-val risk" id="kv-sin"></div>
+    <div class="kpi-sub">en riesgo · clic para filtrar</div>
+    <div class="kpi-ico">🔴</div>
+  </div>
+  <div class="kpi k-gold">
+    <div class="kpi-lbl">💰 Ejecución PAC</div>
+    <div class="kpi-val" id="kv-ejec"></div>
+    <div class="kpi-sub" id="kv-ejec-sub"></div>
+    <div class="kpi-ico">📊</div>
+  </div>
+  <div class="kpi k-risk">
+    <div class="kpi-lbl">⚠️ Valor en Riesgo</div>
+    <div class="kpi-val risk" id="kv-riesgo" style="font-size:20px"></div>
+    <div class="kpi-sub">sin cobrar y vencido</div>
+    <div class="kpi-ico">💸</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-h">
+    <h2>🚨 Estado por Contratista</h2>
+    <span class="pill" id="pill-cnt"></span>
+  </div>
+  <div class="fbar">
+    <button class="fbtn fa" onclick="filtrar('TODOS')">📋 Todos</button>
+    <button class="fbtn" id="btn-s" onclick="filtrar('SIN COBRAR')">🔴 Sin Cobrar</button>
+    <button class="fbtn" id="btn-t" onclick="filtrar('TARDE')">🟡 Tarde</button>
+    <button class="fbtn" id="btn-o" onclick="filtrar('AL DÍA')">🟢 Al Día</button>
+    <input class="srch" type="text" placeholder="🔍 Buscar nombre o cédula…" oninput="buscar(this.value)">
+  </div>
+  <div class="twrap">
+    <table class="atbl">
+      <thead><tr>
+        <th>#</th><th>Estado</th><th>Nombre</th><th>Cédula</th>
+        <th>Vigencia</th><th>Meses sin cobrar</th><th>Meses tarde</th>
+        <th>Último cobro</th><th>Total plan</th><th>Cobrado</th><th>En riesgo</th><th>% Ejec</th>
+      </tr></thead>
+      <tbody id="tbl-body"></tbody>
+    </table>
+    <div id="norow" class="norow" style="display:none">Sin resultados.</div>
+  </div>
+  <div class="tcnt" id="tcnt"></div>
+</div>
+
+<div class="cgrid">
+  <div class="sec ccard">
+    <div class="sec-h"><h2>📈 PAC$ vs Cobrado Real por Mes</h2></div>
+    <p style="font-size:10px;color:var(--gray);margin-bottom:8px">Millones COP · programado vs ejecutado</p>
+    <canvas id="ch-pac"></canvas>
+  </div>
+  <div class="sec ccard">
+    <div class="sec-h"><h2>🚦 Semáforo por Mes del PAC</h2></div>
+    <p style="font-size:10px;color:var(--gray);margin-bottom:8px">Contratistas por estado en cada mes programado</p>
+    <canvas id="ch-sem"></canvas>
+  </div>
+</div>
+
+<div class="sec cwcard">
+  <div class="sec-h">
+    <h2>📅 Timeline Anual — Contratos que Inician y Finalizan</h2>
+    <span class="pill">cuando finaliza, deben tener todos sus cobros al día</span>
+  </div>
+  <p style="font-size:10px;color:var(--gray);margin-bottom:8px">
+    <span style="color:var(--ok);font-weight:700">■ Barra verde</span>: inician ese mes ·
+    <span style="color:var(--risk);font-weight:700">● Línea roja</span>: finalizan ese mes
+  </p>
+  <canvas id="ch-tl"></canvas>
+</div>
+
+<div class="sec">
+  <div class="sec-h">
+    <h2>📋 Resumen Mensual — Cronograma de Pagos</h2>
+    <span class="pill">Corte: JUNIO 2026</span>
+  </div>
+  <div style="overflow-x:auto">
+  <table class="rtbl"><thead><tr>
+    <th>Mes</th><th>Con plan</th><th>✅ Cobró</th><th>🟡 Tarde</th>
+    <th>🔴 Sin cobrar</th><th>PAC$ prog.</th><th>COB$ real</th><th>Inician</th><th>Finalizan</th>
+  </tr></thead><tbody id="rsum-body"></tbody></table>
+  </div>
+</div>
+
+</div>
+
+<div class="ftr">PAC PN 2026 · Alcaldía Local de Kennedy · Participación Ciudadana · 07/07/2026 · Corte JUNIO 2026</div>
+
+<script>
+let D={"fecha":"07/07/2026","mes_corte":"JUNIO","mes_corte_n":6,"total":46,"al_dia":12,"tarde":23,"sin_cobrar":11,"ejec_pct":47.3,"riesgo_cop":73062000.0,"total_plan":2011938000.0,"total_cob":951412666.6666669,"pac_mes":[0.0,52.168,235.393,245.393,245.76,245.76,245.76,235.527,189.027,163.573,61.386,92.191],"cob_mes":[0.0,11.124,191.981,272.104,237.637,238.567,0.0,0.0,0.0,0.0,0.0,0.0],"ini_mes":[34,11,1,0,0,0,0,0,0,0,0,0],"fin_mes":[0,0,0,0,0,0,8,2,15,9,0,12],"sem":[{"al_dia":0,"tarde":0,"sin_cobrar":0},{"al_dia":6,"tarde":28,"sin_cobrar":0},{"al_dia":30,"tarde":15,"sin_cobrar":0},{"al_dia":37,"tarde":8,"sin_cobrar":1},{"al_dia":37,"tarde":6,"sin_cobrar":3},{"al_dia":35,"tarde":0,"sin_cobrar":11},{"al_dia":0,"tarde":0,"sin_cobrar":0},{"al_dia":0,"tarde":0,"sin_cobrar":0},{"al_dia":0,"tarde":0,"sin_cobrar":0},{"al_dia":0,"tarde":0,"sin_cobrar":0},{"al_dia":0,"tarde":0,"sin_cobrar":0},{"al_dia":0,"tarde":0,"sin_cobrar":0}],"contratistas":[{"nombre":"Juan Jairo Castiblanco Cárdenas","cedula":"1010189672","estado":"SIN COBRAR","ini":"ENE","fin":"SEP","total":44000000.0,"cobrado":11733333.333333332,"riesgo":11000000.0,"ejec":26.7,"sin_cobrar":2,"tarde":3,"m_sin":"ABR, MAY","m_tarde":"ENE, FEB, MAR","ultimo":"JUN"},{"nombre":"Alexandra Casas Torres","cedula":"1000257286","estado":"SIN COBRAR","ini":"ENE","fin":"JUL","total":33000000.0,"cobrado":5866666.666666667,"riesgo":16500000.0,"ejec":17.8,"sin_cobrar":3,"tarde":2,"m_sin":"MAR, ABR, MAY","m_tarde":"ENE, FEB","ultimo":"ABR"},{"nombre":"Eddy Karina Trillos Navarro","cedula":"1030597390","estado":"SIN COBRAR","ini":"ENE","fin":"DIC","total":32736000.0,"cobrado":7142400.0,"riesgo":5952000.0,"ejec":21.8,"sin_cobrar":2,"tarde":3,"m_sin":"ABR, MAY","m_tarde":"ENE, FEB, MAR","ultimo":"JUN"},{"nombre":"Jenny Katherine Morantes Dallos","cedula":"1030655703","estado":"SIN COBRAR","ini":"ENE","fin":"DIC","total":60500000.0,"cobrado":19250000.0,"riesgo":5500000.0,"ejec":31.8,"sin_cobrar":1,"tarde":4,"m_sin":"MAY","m_tarde":"ENE, FEB, MAR, ABR","ultimo":"JUN"},{"nombre":"Lizdenia Robledo Márquez","cedula":"1052086615","estado":"SIN COBRAR","ini":"ENE","fin":"DIC","total":54087000.0,"cobrado":15406600.0,"riesgo":4917000.0,"ejec":28.5,"sin_cobrar":1,"tarde":4,"m_sin":"MAY","m_tarde":"ENE, FEB, MAR, ABR","ultimo":"JUN"},{"nombre":"CATHERIN ALEJANDRA RODRIGUEZ","cedula":"1033757790","estado":"SIN COBRAR","ini":"ENE","fin":"JUL","total":33000000.0,"cobrado":16683333.333333332,"riesgo":5500000.0,"ejec":50.6,"sin_cobrar":1,"tarde":2,"m_sin":"MAY","m_tarde":"ENE, ABR","ultimo":"JUN"},{"nombre":"Luz Mery Lopez Bustamante","cedula":"40021859","estado":"SIN COBRAR","ini":"ENE","fin":"DIC","total":41800000.0,"cobrado":12920000.0,"riesgo":3800000.0,"ejec":30.9,"sin_cobrar":1,"tarde":3,"m_sin":"MAY","m_tarde":"ENE, FEB, MAR","ultimo":"MAY"},{"nombre":"Gustavo Cendales Melo","cedula":"4090552","estado":"SIN COBRAR","ini":"ENE","fin":"SEP","total":48000000.0,"cobrado":19000000.0,"riesgo":6000000.0,"ejec":39.6,"sin_cobrar":1,"tarde":3,"m_sin":"MAY","m_tarde":"ENE, FEB, MAR","ultimo":"MAY"},{"nombre":"Geraldinne Cuesta Ardila","cedula":"1022986089","estado":"SIN COBRAR","ini":"ENE","fin":"DIC","total":54087000.0,"cobrado":16062200.0,"riesgo":4917000.0,"ejec":29.7,"sin_cobrar":1,"tarde":2,"m_sin":"MAY","m_tarde":"ENE, FEB","ultimo":"MAY"},{"nombre":"Maria Angelica Valero Lozano","cedula":"1030683427","estado":"SIN COBRAR","ini":"ENE","fin":"DIC","total":32736000.0,"cobrado":10118400.0,"riesgo":2976000.0,"ejec":30.9,"sin_cobrar":1,"tarde":0,"m_sin":"MAY","m_tarde":"","ultimo":"MAY"},{"nombre":"Angie Lizeth Vivas Cortes","cedula":"1031161422","estado":"SIN COBRAR","ini":"FEB","fin":"OCT","total":48000000.0,"cobrado":17400000.0,"riesgo":6000000.0,"ejec":36.2,"sin_cobrar":1,"tarde":0,"m_sin":"MAY","m_tarde":"","ultimo":"MAY"},{"nombre":"Sandra Angelica Marin Arango","cedula":"21203714","estado":"TARDE","ini":"ENE","fin":"DIC","total":60500000.0,"cobrado":22733333.333333332,"riesgo":0.0,"ejec":37.6,"sin_cobrar":0,"tarde":3,"m_sin":"","m_tarde":"ENE, FEB, MAR","ultimo":"JUN"},{"nombre":"Sarha Valentina Pineda Mendez","cedula":"1030694889","estado":"TARDE","ini":"ENE","fin":"SEP","total":48000000.0,"cobrado":24400000.0,"riesgo":0.0,"ejec":50.8,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"David Felipe Roa Chavez","cedula":"1030571521","estado":"TARDE","ini":"ENE","fin":"JUL","total":39000000.0,"cobrado":28383333.33333333,"riesgo":0.0,"ejec":72.8,"sin_cobrar":0,"tarde":3,"m_sin":"","m_tarde":"ENE, FEB, MAR","ultimo":"JUN"},{"nombre":"Viviana Patricia Rojas Cujia","cedula":"26948284","estado":"TARDE","ini":"ENE","fin":"SEP","total":48000000.0,"cobrado":25800000.0,"riesgo":0.0,"ejec":53.8,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Miguel Angel Hernandez Jimenez","cedula":"80219087","estado":"TARDE","ini":"FEB","fin":"AGO","total":32999999.999999996,"cobrado":21633333.33333333,"riesgo":0.0,"ejec":65.6,"sin_cobrar":0,"tarde":2,"m_sin":"","m_tarde":"FEB, ABR","ultimo":"JUN"},{"nombre":"David Leonardo Cotrino Cruz","cedula":"80112293","estado":"TARDE","ini":"ENE","fin":"JUL","total":36000000.0,"cobrado":26200000.0,"riesgo":0.0,"ejec":72.8,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Santiago Sanchez Tovar","cedula":"1193156356","estado":"TARDE","ini":"ENE","fin":"JUL","total":36000000.0,"cobrado":25800000.0,"riesgo":0.0,"ejec":71.7,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Heidy Kowoll Moreno","cedula":"1013655390","estado":"TARDE","ini":"ENE","fin":"SEP","total":32000000.0,"cobrado":17200000.0,"riesgo":0.0,"ejec":53.8,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Mery Luz Hurtado Correa","cedula":"52520669","estado":"TARDE","ini":"FEB","fin":"OCT","total":28000000.000000004,"cobrado":13416666.66666667,"riesgo":0.0,"ejec":47.9,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"FEB","ultimo":"JUN"},{"nombre":"Yuly Patricia Martinez Leon","cedula":"1015418089","estado":"TARDE","ini":"ENE","fin":"SEP","total":44000000.0,"cobrado":24750000.0,"riesgo":0.0,"ejec":56.2,"sin_cobrar":0,"tarde":2,"m_sin":"","m_tarde":"ENE, ABR","ultimo":"JUN"},{"nombre":"Reiven Orlando Poveda Pinto","cedula":"1030646971","estado":"TARDE","ini":"ENE","fin":"DIC","total":60500000.0,"cobrado":25116666.66666667,"riesgo":0.0,"ejec":41.5,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ABR","ultimo":"JUN"},{"nombre":"Ivon Andrea Piravaguen Redondo","cedula":"1024524638","estado":"TARDE","ini":"ENE","fin":"SEP","total":40912000.0,"cobrado":21819733.33333333,"riesgo":0.0,"ejec":53.3,"sin_cobrar":0,"tarde":2,"m_sin":"","m_tarde":"ENE, FEB","ultimo":"JUN"},{"nombre":"Joan Sebastian Cuspoca Mejia","cedula":"1010202637","estado":"TARDE","ini":"ENE","fin":"SEP","total":48000000.0,"cobrado":25000000.0,"riesgo":0.0,"ejec":52.1,"sin_cobrar":0,"tarde":2,"m_sin":"","m_tarde":"ENE, FEB","ultimo":"JUN"},{"nombre":"Danna Lizeth Guevara Vargas","cedula":"1030664993","estado":"TARDE","ini":"ENE","fin":"DIC","total":60500000.0,"cobrado":24750000.0,"riesgo":0.0,"ejec":40.9,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Cinthia Pamela Moreno Castillo","cedula":"1016005167","estado":"TARDE","ini":"ENE","fin":"DIC","total":73700000.0,"cobrado":30596666.66666667,"riesgo":0.0,"ejec":41.5,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Daniela Mazuera Gonzalez","cedula":"1011088507","estado":"TARDE","ini":"ENE","fin":"SEP","total":24800000.0,"cobrado":13330000.0,"riesgo":0.0,"ejec":53.8,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Doris Nuridia Ortiz Ortiz","cedula":"20774913","estado":"TARDE","ini":"ENE","fin":"SEP","total":44000000.0,"cobrado":23833333.33333333,"riesgo":0.0,"ejec":54.2,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Julian Andres Castañeda Beltran","cedula":"1000707794","estado":"TARDE","ini":"ENE","fin":"DIC","total":38500000.0,"cobrado":15166666.66666667,"riesgo":0.0,"ejec":39.4,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Jeysson Andres Garcia","cedula":"1023872353","estado":"TARDE","ini":"ENE","fin":"JUL","total":33000000.0,"cobrado":23283333.33333333,"riesgo":0.0,"ejec":70.6,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Cristhian Alejandro Patiño Vanegas","cedula":"1030553356","estado":"TARDE","ini":"ENE","fin":"SEP","total":56000000.0,"cobrado":30566666.66666667,"riesgo":0.0,"ejec":54.6,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Nury Maryory Barriga Avila","cedula":"52503781","estado":"TARDE","ini":"ENE","fin":"SEP","total":38080000.0,"cobrado":19833333.333333332,"riesgo":0.0,"ejec":52.1,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Mireya Gomez Ramos","cedula":"39796128","estado":"TARDE","ini":"ENE","fin":"SEP","total":28000000.0,"cobrado":14583333.333333332,"riesgo":0.0,"ejec":52.1,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"ENE","ultimo":"JUN"},{"nombre":"Alix Yaqueline Gallo Sandoval","cedula":"52475920","estado":"TARDE","ini":"FEB","fin":"AGO","total":36000000.0,"cobrado":23600000.0,"riesgo":0.0,"ejec":65.6,"sin_cobrar":0,"tarde":1,"m_sin":"","m_tarde":"FEB","ultimo":"JUN"},{"nombre":"Isabel Salgado","cedula":"1143351817","estado":"AL DÍA","ini":"FEB","fin":"OCT","total":43999999.99999999,"cobrado":21633333.33333333,"riesgo":0.0,"ejec":49.2,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Diana Smith Rosales Morales","cedula":"63470146","estado":"AL DÍA","ini":"ENE","fin":"JUL","total":33000000.0,"cobrado":23466666.66666667,"riesgo":0.0,"ejec":71.1,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Astrid Yineth Ramirez Cruz","cedula":"52543408","estado":"AL DÍA","ini":"ENE","fin":"SEP","total":52000000.0,"cobrado":28600000.0,"riesgo":0.0,"ejec":55.0,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Yineth Constanza Gomez Rodriguez","cedula":"1024513623","estado":"AL DÍA","ini":"ENE","fin":"DIC","total":60500000.0,"cobrado":24200000.0,"riesgo":0.0,"ejec":40.0,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Angie Caterine Pardo Guarin","cedula":"1030549907","estado":"AL DÍA","ini":"FEB","fin":"OCT","total":43999999.99999999,"cobrado":21633333.33333333,"riesgo":0.0,"ejec":49.2,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Sandra Patricia Jerez","cedula":"52291110","estado":"AL DÍA","ini":"FEB","fin":"OCT","total":43999999.99999999,"cobrado":21633333.33333333,"riesgo":0.0,"ejec":49.2,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Juana Edith Pulido Vargas","cedula":"39812955","estado":"AL DÍA","ini":"MAR","fin":"SEP","total":32999999.999999996,"cobrado":16133333.33333333,"riesgo":0.0,"ejec":48.9,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Magda Yolima Rincon Buenhombre","cedula":"52468007","estado":"AL DÍA","ini":"FEB","fin":"OCT","total":44000000.00000001,"cobrado":21266666.66666667,"riesgo":0.0,"ejec":48.3,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Maria Alejandra Peña Castro","cedula":"1010230750","estado":"AL DÍA","ini":"ENE","fin":"JUL","total":33000000.0,"cobrado":22550000.0,"riesgo":0.0,"ejec":68.3,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Duvan Camilo Quintero","cedula":"1032429152","estado":"AL DÍA","ini":"FEB","fin":"OCT","total":55999999.99999999,"cobrado":27533333.33333333,"riesgo":0.0,"ejec":49.2,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Marvin Cantor Gutierrez","cedula":"11259436","estado":"AL DÍA","ini":"FEB","fin":"OCT","total":48000000.0,"cobrado":23600000.0,"riesgo":0.0,"ejec":49.2,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"},{"nombre":"Helena Patricia Ramirez Churque","cedula":"51875508","estado":"AL DÍA","ini":"FEB","fin":"OCT","total":51999999.99999999,"cobrado":25783333.33333333,"riesgo":0.0,"ejec":49.6,"sin_cobrar":0,"tarde":0,"m_sin":"","m_tarde":"","ultimo":"JUN"}],"resumen":[{"mes":"ENE","n_plan":34,"n_cob":34,"n_tarde":0,"n_sin":0,"pac_m":0.0,"cob_m":0.0,"ini":34,"fin":0},{"mes":"FEB","n_plan":45,"n_cob":45,"n_tarde":28,"n_sin":0,"pac_m":52168000.00000001,"cob_m":11123733.33333334,"ini":11,"fin":0},{"mes":"MAR","n_plan":46,"n_cob":45,"n_tarde":15,"n_sin":0,"pac_m":235393333.33333334,"cob_m":191980933.33333334,"ini":1,"fin":0},{"mes":"ABR","n_plan":46,"n_cob":43,"n_tarde":8,"n_sin":1,"pac_m":245393333.33333334,"cob_m":272103666.6666666,"ini":0,"fin":0},{"mes":"MAY","n_plan":46,"n_cob":35,"n_tarde":6,"n_sin":3,"pac_m":245760000.0,"cob_m":237637333.3333333,"ini":0,"fin":0},{"mes":"JUN","n_plan":46,"n_cob":0,"n_tarde":0,"n_sin":11,"pac_m":245760000.0,"cob_m":238567000.0,"ini":0,"fin":0},{"mes":"JUL","n_plan":46,"n_cob":0,"n_tarde":0,"n_sin":0,"pac_m":245760000.0,"cob_m":0.0,"ini":0,"fin":8},{"mes":"AGO","n_plan":38,"n_cob":0,"n_tarde":0,"n_sin":0,"pac_m":235526666.6666667,"cob_m":0.0,"ini":0,"fin":2},{"mes":"SEP","n_plan":36,"n_cob":0,"n_tarde":0,"n_sin":0,"pac_m":189026666.66666666,"cob_m":0.0,"ini":0,"fin":15},{"mes":"OCT","n_plan":21,"n_cob":0,"n_tarde":0,"n_sin":0,"pac_m":163572933.33333337,"cob_m":0.0,"ini":0,"fin":9},{"mes":"NOV","n_plan":12,"n_cob":0,"n_tarde":0,"n_sin":0,"pac_m":61385999.99999999,"cob_m":0.0,"ini":0,"fin":0},{"mes":"DIC","n_plan":12,"n_cob":0,"n_tarde":0,"n_sin":0,"pac_m":92191066.66666666,"cob_m":0.0,"ini":0,"fin":12}]};
+const MF=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const ML=["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+
+function cop(v){if(v>=1e9)return'$'+(v/1e9).toFixed(1)+'B';if(v>=1e6)return'$'+(v/1e6).toFixed(1)+'M';if(v>=1e3)return'$'+(v/1e3).toFixed(0)+'K';return'$'+Math.round(v).toLocaleString('es-CO')}
+
+document.getElementById('kv-tot').textContent=D.total;
+document.getElementById('kv-ok').textContent=D.al_dia;
+document.getElementById('kv-tard').textContent=D.tarde;
+document.getElementById('kv-sin').textContent=D.sin_cobrar;
+document.getElementById('kv-ejec').textContent=D.ejec_pct+'%';
+document.getElementById('kv-ejec-sub').textContent=cop(D.total_cob)+' de '+cop(D.total_plan);
+document.getElementById('kv-riesgo').textContent=cop(D.riesgo_cop);
+
+let fA='TODOS',bA='';
+function semHtml(e){
+  if(e==='SIN COBRAR')return'<span class="sem ss"><span class="dot ds"></span>SIN COBRAR</span>';
+  if(e==='TARDE')return'<span class="sem st"><span class="dot dt"></span>TARDE</span>';
+  return'<span class="sem so"><span class="dot do"></span>AL DÍA</span>';
+}
+function rClass(e){if(e==='SIN COBRAR')return'rs';if(e==='TARDE')return'rt';return'ro'}
+function pb(p){const col=p>=80?'var(--ok)':p>=50?'var(--warn)':'var(--risk)';return`<div class="pb"><div class="pbi" style="width:${Math.min(p,100)}%;background:${col}"></div></div><div style="font-size:9px;color:var(--gray)">${p}%</div>`}
+
+function renderTbl(){
+  const body=document.getElementById('tbl-body');
+  const norow=document.getElementById('norow');
+  const q=bA.toLowerCase();
+  const data=D.contratistas.filter(c=>{
+    return(fA==='TODOS'||c.estado===fA)&&(!q||c.nombre.toLowerCase().includes(q)||c.cedula.toLowerCase().includes(q));
+  });
+  document.getElementById('pill-cnt').textContent=data.length+' contratistas';
+  if(!data.length){body.innerHTML='';norow.style.display='block';document.getElementById('tcnt').textContent='';return}
+  norow.style.display='none';
+  body.innerHTML=data.map((c,i)=>`<tr class="${rClass(c.estado)}">
+    <td style="color:var(--gray);font-weight:700">${i+1}</td>
+    <td>${semHtml(c.estado)}</td>
+    <td style="font-weight:600;max-width:190px;white-space:normal;word-break:break-word">${c.nombre}</td>
+    <td style="font-family:monospace;color:var(--gray);font-size:10px">${c.cedula}</td>
+    <td style="white-space:nowrap;color:var(--gray)">${c.ini}→${c.fin}</td>
+    <td style="color:var(--risk);font-weight:${c.m_sin?'700':'400'}">${c.m_sin||'—'}</td>
+    <td style="color:var(--warn);font-weight:${c.m_tarde?'700':'400'}">${c.m_tarde||'—'}</td>
+    <td style="color:var(--gray)">${c.ultimo||'Ninguno'}</td>
+    <td style="text-align:right;white-space:nowrap">${cop(c.total)}</td>
+    <td style="text-align:right;white-space:nowrap;color:var(--ok)">${cop(c.cobrado)}</td>
+    <td style="text-align:right;white-space:nowrap;color:var(--risk);font-weight:${c.riesgo>0?'700':'400'}">${c.riesgo>0?cop(c.riesgo):'—'}</td>
+    <td style="min-width:70px">${pb(c.ejec)}</td>
+  </tr>`).join('');
+  const nS=data.filter(c=>c.estado==='SIN COBRAR').length;
+  const nT=data.filter(c=>c.estado==='TARDE').length;
+  const nO=data.filter(c=>c.estado==='AL DÍA').length;
+  document.getElementById('tcnt').textContent=`${data.length} contratistas · 🔴 ${nS} sin cobrar · 🟡 ${nT} tarde · 🟢 ${nO} al día`;
+}
+function filtrar(e){
+  fA=e;
+  document.querySelectorAll('.fbtn').forEach(b=>b.className='fbtn');
+  if(e==='TODOS')document.querySelector('[onclick="filtrar(\'TODOS\')"]').classList.add('fa');
+  else if(e==='SIN COBRAR')document.getElementById('btn-s').classList.add('fs');
+  else if(e==='TARDE')document.getElementById('btn-t').classList.add('ft');
+  else document.getElementById('btn-o').classList.add('fo');
+  renderTbl();
+}
+function buscar(q){bA=q;renderTbl();}
+renderTbl();
+
+document.getElementById('rsum-body').innerHTML=D.resumen.map((r,i)=>{
+  const isC=(i+1)===D.mes_corte_n, isFut=(i+1)>D.mes_corte_n;
+  return`<tr class="${isC?'crow':''}">
+    <td>${MF[i]}
+      ${isC?'<span style="background:var(--gold);color:#7c4700;border-radius:8px;padding:1px 7px;font-size:9px;font-weight:700;margin-left:5px">◀ CORTE</span>':''}
+      ${r.fin>0?`<span class="ftag">${r.fin} finalizan</span>`:''}
+      ${r.ini>0&&i>0?`<span class="itag">${r.ini} inician</span>`:''}
+    </td>
+    <td>${r.n_plan||'—'}</td>
+    <td style="color:var(--ok);font-weight:600">${r.n_cob||(isFut?'—':'0')}</td>
+    <td style="color:var(--warn);font-weight:${r.n_tarde>0?700:400}">${r.n_tarde||'—'}</td>
+    <td style="color:var(--risk);font-weight:${r.n_sin>0?700:400}">${r.n_sin||(isFut?'—':'0')}</td>
+    <td style="text-align:right">${r.pac_m>0?(r.pac_m/1e6).toFixed(2)+'M':'—'}</td>
+    <td style="text-align:right;color:var(--ok)">${r.cob_m>0?(r.cob_m/1e6).toFixed(2)+'M':'—'}</td>
+    <td style="color:var(--ok)">${r.ini>0?r.ini:''}</td>
+    <td style="color:var(--risk);font-weight:${r.fin>0?700:400}">${r.fin>0?r.fin:''}</td>
+  </tr>`;
+}).join('');
+
+new Chart(document.getElementById('ch-pac'),{type:'bar',data:{labels:ML,datasets:[
+  {label:'PAC Programado ($M)',data:D.pac_mes,backgroundColor:'rgba(21,87,160,.8)',borderColor:'#1557A0',borderWidth:1,borderRadius:4,order:2},
+  {label:'Cobrado Real ($M)',data:D.cob_mes,backgroundColor:'rgba(22,163,74,.85)',borderColor:'#16a34a',borderWidth:1,borderRadius:4,order:1},
+]},options:{responsive:true,interaction:{mode:'index',intersect:false},
+  plugins:{legend:{position:'top',labels:{font:{size:10},padding:12}},
+    tooltip:{callbacks:{label:c=>` ${c.dataset.label}: $${c.parsed.y.toFixed(2)}M`}}},
+  scales:{y:{title:{display:true,text:'Millones COP',font:{size:9}},grid:{color:'rgba(0,0,0,.04)'}},x:{grid:{display:false}}}}});
+
+new Chart(document.getElementById('ch-sem'),{type:'bar',data:{labels:ML,datasets:[
+  {label:'🟢 Al Día',data:D.sem.map(s=>s.al_dia),backgroundColor:'rgba(22,163,74,.85)',borderRadius:3,stack:'s'},
+  {label:'🟡 Cobró Tarde',data:D.sem.map(s=>s.tarde),backgroundColor:'rgba(217,119,6,.85)',borderRadius:3,stack:'s'},
+  {label:'🔴 Sin Cobrar',data:D.sem.map(s=>s.sin_cobrar),backgroundColor:'rgba(220,38,38,.85)',borderRadius:3,stack:'s'},
+]},options:{responsive:true,interaction:{mode:'index',intersect:false},
+  plugins:{legend:{position:'top',labels:{font:{size:10},padding:12}},
+    tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y} contratistas`}}},
+  scales:{y:{stacked:true,title:{display:true,text:'Contratistas',font:{size:9}},grid:{color:'rgba(0,0,0,.04)'},ticks:{stepSize:5}},x:{stacked:true,grid:{display:false}}}}});
+
+new Chart(document.getElementById('ch-tl'),{type:'bar',data:{labels:ML,datasets:[
+  {label:'▶ Inician',data:D.ini_mes,backgroundColor:'rgba(22,163,74,.75)',borderColor:'#16a34a',borderWidth:1,borderRadius:5,type:'bar',yAxisID:'y',order:2},
+  {label:'⏹ Finalizan',data:D.fin_mes,type:'line',borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.12)',borderWidth:3,pointBackgroundColor:'#dc2626',pointRadius:6,pointHoverRadius:9,tension:.3,fill:true,yAxisID:'y',order:1},
+]},options:{responsive:true,interaction:{mode:'index',intersect:false},
+  plugins:{legend:{position:'top',labels:{font:{size:11},padding:16}},
+    tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y} contratos`}}},
+  scales:{y:{title:{display:true,text:'Contratos',font:{size:9}},ticks:{stepSize:5},grid:{color:'rgba(0,0,0,.04)'}},x:{grid:{display:false}}}}});
+// ── SINCRONIZACIÓN EN VIVO CON GOOGLE SHEETS ────────────────────────────────
+const SHEET_CSV_URL_PN = 'https://docs.google.com/spreadsheets/d/1TkpieFj3SfWcSU9F0fyqsTGbnPkYUi3N/export?format=csv&gid=394058544';
+
+function tryFetchSheets() {
+  if (!SHEET_CSV_URL_PN || SHEET_CSV_URL_PN.indexOf('docs.google.com') === -1) return;
+  if (window.location.protocol !== 'https:') return;
+  function parseFullCSV(text) {
+    var rows=[],row=[],cur='',inQ=false;
+    for(var i=0;i<text.length;i++){
+      var c=text[i];
+      if(c==='"'){if(inQ&&text[i+1]==='"'){cur+='"';i++;}else{inQ=!inQ;}}
+      else if(c===','&&!inQ){row.push(cur);cur='';}
+      else if((c==='\n'||c==='\r')&&!inQ){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cur);cur='';if(row.join('').trim())rows.push(row);row=[];}
+      else{cur+=c;}
+    }
+    row.push(cur);if(row.join('').trim())rows.push(row);return rows;
+  }
+  function g(cols,idx){return(cols[idx]||'').replace(/^"|"$/g,'').trim();}
+  var MES_N={ENE:1,FEB:2,MAR:3,ABR:4,MAY:5,JUN:6,JUL:7,AGO:8,SEP:9,OCT:10,NOV:11,DIC:12};
+  var MESES_K=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+  var MES_CORTE_N=D.mes_corte_n||6;
+  fetch(SHEET_CSV_URL_PN)
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+    .then(function(csv){
+      var allRows=parseFullCSV(csv);
+      var contr=[],pac_mes=[0,0,0,0,0,0,0,0,0,0,0,0],cob_mes=[0,0,0,0,0,0,0,0,0,0,0,0];
+      var sem=[],ini_mes=[0,0,0,0,0,0,0,0,0,0,0,0],fin_mes=[0,0,0,0,0,0,0,0,0,0,0,0];
+      for(var s=0;s<12;s++)sem.push({al_dia:0,tarde:0,sin_cobrar:0});
+      for(var i=0;i<allRows.length;i++){
+        var cols=allRows[i];
+        var nombre=g(cols,0);
+        if(!nombre||!/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(nombre))continue;
+        var ini_n=parseInt(g(cols,7))||0;var fin_n=parseInt(g(cols,8))||0;
+        if(ini_n<1||ini_n>12)continue;
+        var cedula=g(cols,2);
+        var total_plan=0,cobrado=0,pend_m=0,sin_cob=0,tard=0,m_sin=[],m_trd=[],ultimo='';
+        for(var m=0;m<12;m++){
+          var bc=9+m*3;
+          var p=parseFloat(g(cols,bc).replace(/[^0-9.\-]/g,''))||0;
+          var pac=g(cols,bc+1).toUpperCase().trim();var cob=g(cols,bc+2).toUpperCase().trim();
+          var pn=MES_N[pac]||0;var cn=MES_N[cob]||0;
+          if(p<=0)continue;
+          total_plan+=p;
+          if(pn>=1&&pn<=12)pac_mes[pn-1]+=p;
+          if(cob&&MES_N[cob]){
+            cobrado+=p;
+            if(cn>pn){tard++;m_trd.push(MESES_K[m]);if(pn>=1&&pn<=12)sem[pn-1].tarde++;}
+            else{if(pn>=1&&pn<=12)sem[pn-1].al_dia++;}
+            if(cn>=1&&cn<=12)cob_mes[cn-1]+=p;
+            ultimo=cob;
+          }else{
+            if(pn>=1&&pn<=MES_CORTE_N){sin_cob++;pend_m+=p;m_sin.push(MESES_K[m]);if(pn>=1&&pn<=12)sem[pn-1].sin_cobrar++;}
+          }
+        }
+        if(total_plan<=0)continue;
+        var ejec=Math.round(cobrado/total_plan*1000)/10;
+        var estado=sin_cob>0?'SIN COBRAR':tard>0?'TARDE':'AL DÍA';
+        if(ini_n>=1&&ini_n<=12)ini_mes[ini_n-1]++;
+        if(fin_n>=1&&fin_n<=12)fin_mes[fin_n-1]++;
+        contr.push({nombre:nombre,cedula:cedula,estado:estado,
+          ini:ini_n>=1&&ini_n<=12?MESES_K[ini_n-1]:'',
+          fin:fin_n>=1&&fin_n<=12?MESES_K[fin_n-1]:'',
+          total:total_plan,cobrado:cobrado,riesgo:pend_m,ejec:ejec,
+          sin_cobrar:sin_cob,tarde:tard,m_sin:m_sin.join(', '),m_tarde:m_trd.join(', '),ultimo:ultimo});
+      }
+      if(contr.length<5)return;
+      var ORD={'SIN COBRAR':0,'TARDE':1,'AL DÍA':2};
+      contr.sort(function(a,b){return ORD[a.estado]-ORD[b.estado];});
+      var n_al_dia=contr.filter(function(c){return c.estado==='AL DÍA';}).length;
+      var n_tarde=contr.filter(function(c){return c.estado==='TARDE';}).length;
+      var n_sin=contr.filter(function(c){return c.estado==='SIN COBRAR';}).length;
+      var tP=contr.reduce(function(s,c){return s+c.total;},0);
+      var tCo=contr.reduce(function(s,c){return s+c.cobrado;},0);
+      var tR=contr.reduce(function(s,c){return s+c.riesgo;},0);
+      var ejG=tP>0?Math.round(tCo/tP*1000)/10:0;
+      D.total=contr.length;D.al_dia=n_al_dia;D.tarde=n_tarde;D.sin_cobrar=n_sin;
+      D.ejec_pct=ejG;D.total_plan=tP;D.total_cob=tCo;D.riesgo_cop=tR;
+      D.contratistas=contr;
+      D.pac_mes=pac_mes.map(function(v){return Math.round(v/1e6*1000)/1000;});
+      D.cob_mes=cob_mes.map(function(v){return Math.round(v/1e6*1000)/1000;});
+      D.sem=sem;D.ini_mes=ini_mes;D.fin_mes=fin_mes;
+      document.getElementById('kv-tot').textContent=contr.length;
+      document.getElementById('kv-ok').textContent=n_al_dia;
+      document.getElementById('kv-tard').textContent=n_tarde;
+      document.getElementById('kv-sin').textContent=n_sin;
+      document.getElementById('kv-ejec').textContent=ejG+'%';
+      document.getElementById('kv-ejec-sub').textContent=cop(tCo)+' de '+cop(tP);
+      document.getElementById('kv-riesgo').textContent=cop(tR);
+      renderTbl();
+      var sp=document.getElementById('source-pill');
+      if(sp)sp.textContent='🟢 Google Sheets · en vivo · '+contr.length+' contratistas';
+      console.log('PN Sheets live: '+contr.length+' contratistas');
+    })
+    .catch(function(e){console.warn('PN Sheets no disponible:',e.message);});
+}
+tryFetchSheets();
+</script>
+</body></html>
